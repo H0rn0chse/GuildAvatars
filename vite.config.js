@@ -37,6 +37,6 @@ export default defineConfig({
   },
   base: "./",
   build: {
-    outDir: fileURLToPath(new URL('./docs', import.meta.url))
+    outDir: fileURLToPath(new URL("./docs", import.meta.url))
   }
 });
