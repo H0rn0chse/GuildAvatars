@@ -1,0 +1,28 @@
+{
+  "name": "guild-avatars",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --fix --ignore-path .gitignore",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@mdi/font": "7.2.96",
+    "github-corner-element": "^1.0.2",
+    "pinia": "^2.0.23",
+    "roboto-fontface": "*",
+    "vue": "^3.2.0",
+    "vuetify": "^3.0.0",
+    "webfontloader": "^1.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "eslint": "^8.22.0",
+    "eslint-plugin-vue": "^9.3.0",
+    "husky": "^8.0.3",
+    "vite": "^4.2.0",
+    "vite-plugin-vuetify": "^1.0.0"
+  }
+}
