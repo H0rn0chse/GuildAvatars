@@ -1,5 +1,5 @@
 <script setup>
-import Settings from "@/components/Settings.vue";
+import PresetSelection from "@/components/PresetSelection.vue";
 import Editor from "@/components/Editor.vue";
 </script>
 
@@ -11,7 +11,7 @@ import Editor from "@/components/Editor.vue";
   >
     <v-main>
       <div id="gridContainer">
-        <Settings style="gridArea:settings;" />
+        <PresetSelection style="gridArea:presetSelection;" />
         <Editor style="gridArea:editor;" />
       </div>
     </v-main>
@@ -29,8 +29,9 @@ import Editor from "@/components/Editor.vue";
 
 #gridContainer {
   display: grid;
-  grid-template-columns: min-content auto;
+  grid-template-columns: 20rem auto;
   grid-template-rows: auto;
   grid-template-areas:
-    "settings editor";
-}</style>
+    "presetSelection editor";
+}
+</style>

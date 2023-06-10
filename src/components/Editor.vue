@@ -3,13 +3,18 @@
 </script>
 
 <template>
-  <div id="editor">Editor</div>
+  <div id="main">
+    <h2>Editor</h2>
+  </div>
 </template>
 
 <style scoped>
-#editor {
-    background-color: lightblue;
-    padding: 2rem;
-    color: #2b2b2b;
+#main {
+  background-color: lightblue;
+  padding: 2rem;
+}
+
+#main h2 {
+  color: #2b2b2b;
 }
 </style>
