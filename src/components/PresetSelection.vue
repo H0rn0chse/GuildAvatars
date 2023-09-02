@@ -12,14 +12,6 @@ const localPresets = computed(() => {
   });
 });
 
-function selectPreset (preset) {
-  appStore.currentPreset = preset.id;
-}
-
-function addPreset () {
-  alert("addPreset");
-}
-
 </script>
 
 <template>
@@ -31,14 +23,14 @@ function addPreset () {
           v-for="preset in localPresets"
           :key="preset.id"
           :active="preset.selected"
-          @click="selectPreset(preset)"
+          @click="appStore.selectPreset(preset.id)"
         >
           <PresetListPreview :name="preset.name" />
         </v-list-item>
       </v-list>
       <div
         class="addBtn"
-        @click="addPreset"
+        @click="appStore.addPreset"
       >
         <v-btn title="Add Preset">
           Add Preset

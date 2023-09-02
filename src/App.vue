@@ -1,6 +1,10 @@
 <script setup>
 import PresetSelection from "@/components/PresetSelection.vue";
-import Editor from "@/components/Editor.vue";
+import PresetEditor from "@/components/PresetEditor.vue";
+import ContentEditor from "@/components/ContentEditor.vue";
+import { useAppStore } from "@/store/app";
+
+const appStore = useAppStore();
 </script>
 
 <template>
@@ -12,7 +16,14 @@ import Editor from "@/components/Editor.vue";
     <v-main>
       <div id="gridContainer">
         <PresetSelection style="gridArea:presetSelection;" />
-        <Editor style="gridArea:editor;" />
+        <PresetEditor
+          v-if="appStore.route === 'PresetEditor'"
+          style="gridArea:editor;"
+        />
+        <ContentEditor
+          v-if="appStore.route === 'ContentEditor'"
+          style="gridArea:editor;"
+        />
       </div>
     </v-main>
   </v-app>
