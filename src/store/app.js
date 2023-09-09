@@ -7,6 +7,11 @@ const emptyPreset = {
   src: null
 };
 
+export const Routes = {
+  PresetEditor: "PresetEditor",
+  ContentEditor: "ContentEditor"
+};
+
 export const useAppStore = defineStore("app", {
   state: () => ({
     route: null,
@@ -28,16 +33,16 @@ export const useAppStore = defineStore("app", {
   actions: {
     selectPreset (newPreset) {
       this.selectedPresetId = newPreset;
-      this.route = "ContentEditor";
+      this.route = Routes.ContentEditor;
     },
     addPreset () {
       this.presetEdit = JSON.parse(JSON.stringify(emptyPreset));
       this.presetEdit.id = Date.now(); // todo: replace with uuid
-      this.route = "PresetEditor";
+      this.route = Routes.PresetEditor;
     },
     editPreset () {
       this.presetEdit = JSON.parse(JSON.stringify(this.currentPreset));
-      this.route = "PresetEditor";
+      this.route = Routes.PresetEditor;
     },
     deletePreset () {
       const index = this._getPresetIndex(this.currentPreset.id);
@@ -52,11 +57,11 @@ export const useAppStore = defineStore("app", {
       this.selectedPresetId = this.presetEdit.id;
       // todo: persist
       this.presetEdit = null;
-      this.route = "ContentEditor";
+      this.route = Routes.ContentEditor;
     },
     cancelPreset () {
       this.presetEdit = null;
-      this.route = "ContentEditor";
+      this.route = Routes.ContentEditor;
     },
     _getPresetIndex (id) {
       const index = this.presets.findIndex(preset => preset.id === id);
