@@ -7,7 +7,7 @@ const appStore = useAppStore();
 
 <template>
   <div id="main">
-    <h2>ContentEditor</h2>
+    <h2>ContentEditor - {{ appStore.currentPreset?.name }}</h2>
     <div id="footer">
       <v-btn @click="appStore.editPreset">
         Edit

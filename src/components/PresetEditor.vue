@@ -8,6 +8,7 @@ const appStore = useAppStore();
 <template>
   <div id="main">
     <h2>PresetEditor</h2>
+    <v-text-field v-model="appStore.presetEdit.name" />
     <div id="footer">
       <v-btn @click="appStore.savePreset">
         Save

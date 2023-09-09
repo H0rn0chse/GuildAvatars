@@ -7,7 +7,7 @@ const appStore = useAppStore();
 
 const localPresets = computed(() => {
   return appStore.presets.map(preset => {
-    preset.selected = preset.id === appStore.currentPreset;
+    preset.selected = preset.id === appStore.selectedPresetId;
     return preset;
   });
 });
