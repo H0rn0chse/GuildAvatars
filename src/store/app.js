@@ -4,7 +4,18 @@ import { defineStore } from "pinia";
 const emptyPreset = {
   id: 0,
   name: "new Preset",
-  src: null
+  imageSrc: null,
+  font: null,
+  textBox: {
+    x: 0,
+    y: 0,
+    w: 100,
+    h: 100,
+    ref: {
+      w: 0,
+      h: 0
+    }
+  }
 };
 
 export const Routes = {
@@ -15,15 +26,29 @@ export const Routes = {
 export const useAppStore = defineStore("app", {
   state: () => ({
     route: null,
-    presets: new Array(30).fill(0).map((value, index) => {
+    presets: new Array(3).fill(0).map((value, index) => {
       return {
         id: index,
         name: `Preset #${index}`,
-        src: null
+        imageSrc: null,
+        font: null,
+        textBox: {
+          x: 0,
+          y: 0,
+          w: 100,
+          h: 100,
+          ref: {
+            w: 0,
+            h: 0
+          }
+        }
       };
     }),
-    selectedPresetId: 0,
-    presetEdit: null
+    selectedPresetId: null,
+    presetEdit: null,
+    contentEdit: {
+      text: "Lorem Ipsum" // todo: clear
+    }
   }),
   getters: {
     currentPreset (state) {
