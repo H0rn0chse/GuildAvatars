@@ -13,6 +13,7 @@
     "github-corner-element": "^1.0.2",
     "pinia": "^2.0.23",
     "roboto-fontface": "*",
+    "textfit": "^2.4.0",
     "vue": "^3.2.0",
     "vuetify": "^3.3.15",
     "webfontloader": "^1.0.0"

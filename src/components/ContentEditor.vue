@@ -1,5 +1,6 @@
 <script setup>
 import { useAppStore } from "@/store/app";
+import { fitText } from "@/js/utils";
 import { nextTick } from "vue";
 import { watch } from "vue";
 import { reactive } from "vue";
@@ -20,6 +21,7 @@ watch([avatarImage, appStore.currentPreset], async () => {
   localImage.height = avatarImage.value?.offsetHeight || 0;
 });
 
+const fontSize = ref(0);
 const localText = computed(() => {
   const source = appStore.currentPreset.textBox;
 
@@ -34,6 +36,22 @@ const localText = computed(() => {
     w: source.w * ratio.x,
     h: source.h * ratio.y
   };
+});
+
+const avatarName = ref(null);
+watch([localText, avatarName, avatarImage, appStore.currentPreset, appStore.contentEdit], async () => {
+  const elem = avatarName.value;
+  // wait for render
+  if (elem && elem.clientWidth && elem.clientHeight) {
+    const { fontSize: fittedFontSize } = fitText({
+      text: appStore.contentEdit.text,
+      width: localText.value.w,
+      height: localText.value.h,
+      font: appStore.currentPreset.font
+    });
+
+    fontSize.value = fittedFontSize;
+  }
 });
 
 function exportImage () {
@@ -56,8 +74,10 @@ function exportImage () {
       >
       <div
         id="avatarName"
+        ref="avatarName"
         :style="{
           'font-family': appStore.currentPreset.font,
+          'font-size': fontSize,
           'width': localText.w + 'px',
           'height': localText.h + 'px',
           'top': localText.y + 'px',
@@ -113,6 +133,11 @@ function exportImage () {
   text-align: center;
   border-radius: 5px;
   padding: 3px;
+  display: flex;
+  white-space: nowrap;
+  line-height: normal;
+  justify-content: center;
+  align-items: center;
 }
 
 #footer {
