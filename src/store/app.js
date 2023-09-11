@@ -38,7 +38,7 @@ export const useAppStore = defineStore("app", {
   }),
   getters: {
     currentPreset (state) {
-      return state.presets.find(preset => preset.id === state.selectedPresetId);
+      return state.presets.find(preset => preset.id === state.selectedPresetId) || clone(emptyPreset);
     }
   },
   actions: {

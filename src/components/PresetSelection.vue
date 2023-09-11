@@ -47,12 +47,12 @@ const localPresets = computed(() => {
   padding: 2rem;
 
   /*temp*/
-  background-color: lightcoral;
+  /* background-color: lightcoral; */
 }
 
 #main h2 {
   /*temp*/
-  color: #2b2b2b;
+  /* color: #2b2b2b; */
 }
 
 .section {

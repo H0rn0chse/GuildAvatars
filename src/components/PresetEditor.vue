@@ -6,6 +6,9 @@ import { ref } from "vue";
 const appStore = useAppStore();
 
 function applyBackground ([firstFile]) {
+  if (!firstFile) {
+    return;
+  }
   const supportedFileEndings = [
     ".png",
     ".jpeg",
@@ -48,9 +51,6 @@ function restrictResize (mutationRecords, mutationObserver) {
   const height = Math.min(target.offsetHeight, parentBox.height - target.offsetTop - parentBorder * 2);
   target.style.width = `${width}px`;
   target.style.height = `${height}px`;
-}
-
-function applyFont () {
 }
 
 </script>
@@ -97,7 +97,7 @@ function applyFont () {
     />
     <v-row id="fontEditor">
       <p :style="{ 'font-family': appStore.presetEdit.font }">
-        Lorem Ipsum
+        Lorem ipsum dolor sit amet
       </p>
       <v-text-field
         v-model="appStore.presetEdit.font"
@@ -117,12 +117,12 @@ function applyFont () {
 
 <style scoped>
 #main {
-  background-color: lightblue;
+  /* background-color: lightblue; */
   padding: 2rem;
 }
 
 #main h2 {
-  color: #2b2b2b;
+  /* color: #2b2b2b; */
 }
 
 #imageEditor {
@@ -140,8 +140,7 @@ function applyFont () {
 
 #textBoxResize {
   position: absolute;
-  background-color: black;
-  opacity: 0.5;
+  background-color: rgb(240, 128, 128, 0.5);
   overflow: auto;
   resize: both;
   border-radius: 3px;

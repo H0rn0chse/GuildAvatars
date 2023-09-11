@@ -107,13 +107,13 @@ function exportImage () {
 
 <style scoped>
 #main {
-  background-color: lightseagreen;
+  /* background-color: lightseagreen; */
   padding: 2rem;
   position: relative;
 }
 
 #main h2 {
-  color: #2b2b2b;
+  /* color: #2b2b2b; */
 }
 
 .image {
@@ -125,11 +125,12 @@ function exportImage () {
   position: relative;
   width: min-content;
   overflow: hidden;
+  margin: 1rem;
 }
 
 #avatarName {
   position: absolute;
-  background-color: rgb(255, 0, 0, 0.5);
+  background-color: rgb(240, 128, 128, 0.5);
   text-align: center;
   border-radius: 5px;
   padding: 3px;

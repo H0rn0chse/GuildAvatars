@@ -38,6 +38,7 @@ async function setPersonalization (data) {
 }
 
 function getDB () {
+  // todo use lib for indexed db access
   return new Promise((resolve, reject) => {
     const open = indexedDB.open(databaseName, 1);
     open.onsuccess = () => {
