@@ -1,29 +1,31 @@
 <script setup>
 import { useAppStore } from "@/store/app";
+import { nextTick } from "vue";
+import { watch } from "vue";
+import { reactive } from "vue";
 import { computed } from "vue";
 import { ref } from "vue";
 
 const avatarImage = ref(null);
 const appStore = useAppStore();
 
-const localText = computed(() => {
-  /*if (!avatarImage.value) {
-    return {
-      x: 0,
-      y: 0,
-      w: 0,
-      h: 0
-    };
-  }*/
-  //todo: use dynamic size
-  const imageWidth = 480; //avatarImage.value.offsetWidth;
-  const imageHeight = 480; //avatarImage.value.offsetHeight;
+const localImage = reactive({
+  width: 0,
+  height: 0
+});
 
+watch([avatarImage, appStore.currentPreset], async () => {
+  await nextTick();
+  localImage.width = avatarImage.value?.offsetWidth || 0;
+  localImage.height = avatarImage.value?.offsetHeight || 0;
+});
+
+const localText = computed(() => {
   const source = appStore.currentPreset.textBox;
 
   const ratio = {
-    x: imageWidth / source.ref.w,
-    y: imageHeight / source.ref.h
+    x: localImage.width / source.ref.w,
+    y: localImage.height / source.ref.h
   };
 
   return {
