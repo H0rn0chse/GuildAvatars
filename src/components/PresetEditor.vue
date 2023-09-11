@@ -26,18 +26,17 @@ function applyBackground ([firstFile]) {
 const textbox = ref(null);
 function localSave () {
   const target = textbox.value;
-  appStore.presetEdit.textBox.x = target.offsetLeft;
-  appStore.presetEdit.textBox.y = target.offsetTop;
-  appStore.presetEdit.textBox.w = target.offsetWidth;
-  appStore.presetEdit.textBox.h = target.offsetHeight;
+  appStore.presetEdit.textBox.x = target?.offsetLeft || 0;
+  appStore.presetEdit.textBox.y = target?.offsetTop || 0;
+  appStore.presetEdit.textBox.w = target?.offsetWidth || 0;
+  appStore.presetEdit.textBox.h = target?.offsetHeight || 0;
 
   // save current parent size w/o borders as reference
-  appStore.presetEdit.textBox.ref.w = target.parentElement.clientWidth;
-  appStore.presetEdit.textBox.ref.h = target.parentElement.clientHeight;
+  appStore.presetEdit.textBox.ref.w = target?.parentElement?.clientWidth || 0;
+  appStore.presetEdit.textBox.ref.h = target?.parentElement?.clientHeight || 0;
   appStore.savePreset();
 }
 
-const maxWidth = ref(999);
 function restrictResize (mutationRecords, mutationObserver) {
   if (isDnDActive()) {
     return; // dnd is already handled differently
