@@ -1,4 +1,4 @@
-import * as textFit from "textfit";
+import { default as textFit } from "textfit";
 
 export function clone (obj) {
   return JSON.parse(JSON.stringify(obj));
