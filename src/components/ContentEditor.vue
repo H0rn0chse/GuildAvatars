@@ -1,6 +1,6 @@
 <script setup>
 import { useAppStore } from "@/store/app";
-import { fitText } from "@/js/utils";
+import { fitText, exportImage, translateSize } from "@/js/utils";
 import { nextTick } from "vue";
 import { watch } from "vue";
 import { reactive } from "vue";
@@ -24,18 +24,12 @@ watch([avatarImage, appStore.currentPreset], async () => {
 const fontSize = ref(0);
 const localText = computed(() => {
   const source = appStore.currentPreset.textBox;
-
-  const ratio = {
-    x: localImage.width / source.ref.w,
-    y: localImage.height / source.ref.h
+  const target = {
+    w: localImage.width,
+    h: localImage.height
   };
 
-  return {
-    x: source.x * ratio.y,
-    y: source.y * ratio.y,
-    w: source.w * ratio.x,
-    h: source.h * ratio.y
-  };
+  return translateSize(target, source, source.ref);
 });
 
 const avatarName = ref(null);
@@ -54,8 +48,20 @@ watch([localText, avatarName, avatarImage, appStore.currentPreset, appStore.cont
   }
 });
 
-function exportImage () {
-  console.error("EXPORT");
+function exportImageLocal () {
+  const image = avatarImage.value;
+  const preset = appStore.currentPreset;
+  exportImage({
+    text: appStore.contentEdit.text,
+    textBox: preset.textBox,
+    imageSrc: preset.imageSrc,
+    font: preset.font,
+    fontColor: preset.fontColor,
+    target: {
+      w: image.naturalWidth,
+      h: image.naturalHeight
+    }
+  });
 }
 
 </script>
@@ -98,7 +104,7 @@ function exportImage () {
       <v-btn @click="appStore.deletePreset">
         Delete
       </v-btn>
-      <v-btn @click="exportImage">
+      <v-btn @click="exportImageLocal">
         Export
       </v-btn>
     </div>

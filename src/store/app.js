@@ -9,6 +9,7 @@ const emptyPreset = {
   name: "new Preset",
   imageSrc: null,
   font: null,
+  fontColor: "#fff",
   textBox: {
     x: 0,
     y: 0,

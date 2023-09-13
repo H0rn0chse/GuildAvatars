@@ -4,6 +4,20 @@ export function clone (obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
+export function translateSize (target, source, ref) {
+  const ratio = {
+    x: target.w / ref.w,
+    y: target.h / ref.h
+  };
+
+  return {
+    x: source.x * ratio.y,
+    y: source.y * ratio.y,
+    w: source.w * ratio.x,
+    h: source.h * ratio.y
+  };
+}
+
 export function fitText ({ text, width, height, font }) {
   const elem = document.createElement("div");
   elem.innerText = text;
@@ -47,8 +61,99 @@ export function fitText ({ text, width, height, font }) {
     elem.remove();
   }
 
-
   return ({
     fontSize
   });
+}
+
+let canvas;
+function getCanvas () {
+  if (!canvas) {
+    canvas = document.createElement("canvas");
+    canvas.style.position = "fixed";
+    canvas.style.right = 0;
+    canvas.style.bottom = 0;
+    canvas.style.borderColor = "red";
+    canvas.style.borderWidth = "1px";
+    canvas.style.borderStyle = "solid";
+    //document.body.appendChild(canvas);
+  }
+  // clear canvas
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  return canvas;
+}
+
+function drawImageUrl (ctx, imageUrl, { x, y }) {
+  return new Promise((resolve, reject) => {
+    const tempImg = new Image();
+    tempImg.addEventListener("load", function () {
+      ctx.drawImage(tempImg, x, y);
+      tempImg.remove();
+      resolve();
+    }, { once: true });
+    tempImg.src = imageUrl;
+  });
+}
+
+async function drawText (ctx, options) {
+  const textBox = translateSize(options.target, options.textBox, options.textBox.ref);
+  const { fontSize } = fitText({
+    text: options.text,
+    width: textBox.w,
+    height: textBox.h,
+    font: options.font
+  });
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${textBox.w}" height="${textBox.h}">
+      <style>
+        div {
+          font-family: "${options.font}";
+          color: ${options.fontColor || "rgb(255, 255, 255)"};
+          font-size: ${fontSize};
+          display: flex;
+          white-space: nowrap;
+          line-height: normal;
+          justify-content: center;
+          align-items: center;
+        }
+      </style>
+      <foreignObject width="100%" height="100%">
+        <div xmlns="http://www.w3.org/1999/xhtml">${options.text}</div>
+      </foreignObject>
+    </svg>`;
+
+  const url = `data:image/svg+xml; charset=utf8, ${encodeURIComponent(svg)}`;
+  // browser taints the canvas when using blobUrl instead of dataUrl
+  // const svgBlob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+  // const svgObjectUrl = URL.createObjectURL(svgBlob);
+
+  await drawImageUrl(ctx, url, textBox);
+  // URL.revokeObjectURL(svgObjectUrl);
+}
+
+export async function exportImage (options) {
+  const canvas = getCanvas();
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = options.target.w;
+  canvas.height = options.target.h;
+  // ctx.fillStyle = "white"
+  // ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  await drawImageUrl(ctx, options.imageSrc, { x: 0, y: 0 });
+
+  await drawText(ctx, options);
+
+  canvas.toBlob((blob) => {
+    exportBlob(blob, "export.png");
+  });
+}
+
+function exportBlob (content, fileName) {
+  const a = document.createElement("a");
+  a.setAttribute("href", URL.createObjectURL(content));
+  a.setAttribute("download", fileName);
+  a.click();
 }

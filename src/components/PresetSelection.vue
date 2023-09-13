@@ -46,6 +46,8 @@ const localPresets = computed(() => {
   overflow: hidden;
   padding: 2rem;
 
+  border-right: solid #cbcbcb 3px;
+
   /*temp*/
   /* background-color: lightcoral; */
 }
@@ -67,8 +69,9 @@ const localPresets = computed(() => {
   margin: 0.25rem;
   padding: 0.25rem;
 
-  border-top: solid #2b2b2b 1px;
+  border-top: solid #cbcbcb 1px;
   margin-top: 1rem;
+  padding-top: 1rem;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
 }
