@@ -47,14 +47,6 @@ const localPresets = computed(() => {
   padding: 2rem;
 
   border-right: solid #cbcbcb 3px;
-
-  /*temp*/
-  /* background-color: lightcoral; */
-}
-
-#main h2 {
-  /*temp*/
-  /* color: #2b2b2b; */
 }
 
 .section {

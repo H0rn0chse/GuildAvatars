@@ -1,4 +1,4 @@
-export function dragstart (event) {
+export function dragstart () {
   return false;
 }
 
@@ -55,7 +55,7 @@ function mouseMove (target, offset, event) {
   moveAt(target, pos, offset);
 }
 
-function mouseUp (target, mouseMoveHandler, event) {
+function mouseUp (target, mouseMoveHandler) {
   dndActive = false;
   document.removeEventListener("mousemove", mouseMoveHandler);
   target.onmouseup = null;

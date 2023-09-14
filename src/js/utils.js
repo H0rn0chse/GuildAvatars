@@ -1,5 +1,7 @@
 import { default as textFit } from "textfit";
 
+/*global showSaveFilePicker*/
+
 export function clone (obj) {
   return JSON.parse(JSON.stringify(obj));
 }
@@ -85,7 +87,7 @@ function getCanvas () {
 }
 
 function drawImageUrl (ctx, imageUrl, { x, y }) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const tempImg = new Image();
     tempImg.addEventListener("load", function () {
       ctx.drawImage(tempImg, x, y);
@@ -97,7 +99,7 @@ function drawImageUrl (ctx, imageUrl, { x, y }) {
 }
 
 async function drawText (ctx, options) {
-  const textBox = translateSize(options.target, options.textBox, options.textBox.ref);
+  const textBox = translateSize(options.image, options.textBox, options.textBox.ref);
   const { fontSize } = fitText({
     text: options.text,
     width: textBox.w,
@@ -137,23 +139,56 @@ export async function exportImage (options) {
   const canvas = getCanvas();
   const ctx = canvas.getContext("2d");
 
-  canvas.width = options.target.w;
-  canvas.height = options.target.h;
+  canvas.width = options.image.w;
+  canvas.height = options.image.h;
   // ctx.fillStyle = "white"
   // ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  await drawImageUrl(ctx, options.imageSrc, { x: 0, y: 0 });
+  await drawImageUrl(ctx, options.image.src, { x: 0, y: 0 });
 
   await drawText(ctx, options);
 
-  canvas.toBlob((blob) => {
-    exportBlob(blob, "export.png");
+  const blob = await canvasToBlob(canvas);
+
+
+
+  // only works in chrome
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await showSaveFilePicker({
+        suggestedName: "avatar.png",
+        types: [
+          {
+            description: "Image",
+            accept: { "image/png": [".png"] },
+          },
+        ],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      writable.close();
+    } catch {
+      // ...
+    }
+  }
+
+  // force download
+  //exportBlob(blob, "avatar.png");
+
+  return URL.createObjectURL(blob);
+}
+
+function canvasToBlob (canvas) {
+  return new Promise((resolve) => {
+    canvas.toBlob(resolve);
   });
 }
 
 function exportBlob (content, fileName) {
   const a = document.createElement("a");
-  a.setAttribute("href", URL.createObjectURL(content));
+  const url = URL.createObjectURL(content);
+  a.setAttribute("href", url);
   a.setAttribute("download", fileName);
   a.click();
+  URL.revokeObjectURL(url);
 }

@@ -21,13 +21,15 @@ function applyBackground ([firstFile]) {
   }
   const reader = new FileReader();
   reader.onload = (event) => {
-    appStore.presetEdit.imageSrc = event.target.result;
+    appStore.presetEdit.image.src = event.target.result;
   };
   reader.readAsDataURL(firstFile);
 }
 
+const avatarImage = ref(null);
 const textbox = ref(null);
 function localSave () {
+  const image = avatarImage.value;
   const target = textbox.value;
   appStore.presetEdit.textBox.x = target?.offsetLeft || 0;
   appStore.presetEdit.textBox.y = target?.offsetTop || 0;
@@ -37,10 +39,13 @@ function localSave () {
   // save current parent size w/o borders as reference
   appStore.presetEdit.textBox.ref.w = target?.parentElement?.clientWidth || 0;
   appStore.presetEdit.textBox.ref.h = target?.parentElement?.clientHeight || 0;
+  // save target size
+  appStore.presetEdit.image.w = image.naturalWidth;
+  appStore.presetEdit.image.h = image.naturalHeight;
   appStore.savePreset();
 }
 
-function restrictResize (mutationRecords, mutationObserver) {
+function restrictResize () {
   if (isDnDActive()) {
     return; // dnd is already handled differently
   }
@@ -63,13 +68,14 @@ function restrictResize (mutationRecords, mutationObserver) {
       label="Preset Name"
     />
     <div
-      v-if="appStore.presetEdit.imageSrc"
+      v-if="appStore.presetEdit.image.src"
       id="imageEditor"
       class="noSelect"
     >
       <img
+        ref="avatarImage"
         class="image"
-        :src="appStore.presetEdit.imageSrc"
+        :src="appStore.presetEdit.image.src"
       >
       <div
         id="textBoxResize"
@@ -117,12 +123,7 @@ function restrictResize (mutationRecords, mutationObserver) {
 
 <style scoped>
 #main {
-  /* background-color: lightblue; */
   padding: 2rem;
-}
-
-#main h2 {
-  /* color: #2b2b2b; */
 }
 
 #imageEditor {

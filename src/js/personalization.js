@@ -20,7 +20,7 @@ const defaultPers = {
 async function getPersonalization () {
   const { store } = await getDB();
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const getData = store.get(objectKey);
     getData.onsuccess = () => {
       const data = getData.result || defaultPers;
@@ -52,7 +52,7 @@ function getDB () {
     };
     open.onupgradeneeded = () => {
       const db = open.result;
-      const store = db.createObjectStore(storeName, { keyPath: "id" });
+      db.createObjectStore(storeName, { keyPath: "id" });
     };
     open.onerror = () => {
       reject();

@@ -1,13 +1,8 @@
 <script setup>
 import { useAppStore } from "@/store/app";
 import { fitText, exportImage, translateSize } from "@/js/utils";
-import { nextTick } from "vue";
-import { watch } from "vue";
-import { reactive } from "vue";
-import { computed } from "vue";
-import { ref } from "vue";
+import { nextTick, watch, reactive, computed, ref } from "vue";
 
-const avatarImage = ref(null);
 const appStore = useAppStore();
 
 const localImage = reactive({
@@ -15,6 +10,7 @@ const localImage = reactive({
   height: 0
 });
 
+const avatarImage = ref(null);
 watch([avatarImage, appStore.currentPreset], async () => {
   await nextTick();
   localImage.width = avatarImage.value?.offsetWidth || 0;
@@ -48,20 +44,16 @@ watch([localText, avatarName, avatarImage, appStore.currentPreset, appStore.cont
   }
 });
 
-function exportImageLocal () {
-  const image = avatarImage.value;
+async function exportImageLocal () {
   const preset = appStore.currentPreset;
-  exportImage({
+  const dataUrl = await exportImage({
     text: appStore.contentEdit.text,
     textBox: preset.textBox,
-    imageSrc: preset.imageSrc,
+    image: preset.image,
     font: preset.font,
-    fontColor: preset.fontColor,
-    target: {
-      w: image.naturalWidth,
-      h: image.naturalHeight
-    }
+    fontColor: preset.fontColor
   });
+  appStore.contentEdit.dataUrl = dataUrl;
 }
 
 </script>
@@ -70,13 +62,13 @@ function exportImageLocal () {
   <div id="main">
     <h2>ContentEditor - {{ appStore.currentPreset?.name }}</h2>
     <div
-      v-if="appStore.currentPreset.imageSrc"
+      v-if="appStore.currentPreset.image.src"
       id="avatar"
     >
       <img
         ref="avatarImage"
         class="image"
-        :src="appStore.currentPreset.imageSrc"
+        :src="appStore.currentPreset.image.src"
       >
       <div
         id="avatarName"
@@ -107,19 +99,19 @@ function exportImageLocal () {
       <v-btn @click="exportImageLocal">
         Export
       </v-btn>
+      <img
+        v-if="appStore.contentEdit.dataUrl"
+        :src="appStore.contentEdit.dataUrl"
+        width="50"
+      >
     </div>
   </div>
 </template>
 
 <style scoped>
 #main {
-  /* background-color: lightseagreen; */
   padding: 2rem;
   position: relative;
-}
-
-#main h2 {
-  /* color: #2b2b2b; */
 }
 
 .image {
@@ -136,7 +128,7 @@ function exportImageLocal () {
 
 #avatarName {
   position: absolute;
-  background-color: rgb(240, 128, 128, 0.5);
+  /* background-color: rgb(240, 128, 128, 0.5); */
   text-align: center;
   border-radius: 5px;
   padding: 3px;
@@ -148,6 +140,8 @@ function exportImageLocal () {
 }
 
 #footer {
+  display: flex;
+  align-items: center;
   position: absolute;
   bottom: 2rem;
 }

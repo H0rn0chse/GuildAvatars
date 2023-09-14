@@ -7,7 +7,11 @@ import { v4 as uuidV4 } from "uuid";
 const emptyPreset = {
   id: 0,
   name: "new Preset",
-  imageSrc: null,
+  image: {
+    src: null,
+    w: 0,
+    h: 0
+  },
   font: null,
   fontColor: "#fff",
   textBox: {
@@ -22,6 +26,11 @@ const emptyPreset = {
   }
 };
 
+const emptyContent = {
+  text: "Nickname",
+  dataUrl: null
+};
+
 export const Routes = {
   PresetEditor: "PresetEditor",
   ContentEditor: "ContentEditor"
@@ -33,9 +42,7 @@ export const useAppStore = defineStore("app", {
     presets: [],
     selectedPresetId: null,
     presetEdit: null,
-    contentEdit: {
-      text: "Nickname"
-    }
+    contentEdit: emptyContent
   }),
   getters: {
     currentPreset (state) {
@@ -45,6 +52,7 @@ export const useAppStore = defineStore("app", {
   actions: {
     selectPreset (newPreset) {
       this.selectedPresetId = newPreset;
+      this.contentEdit = clone(emptyContent);
       this.route = Routes.ContentEditor;
     },
     addPreset () {
