@@ -102,6 +102,25 @@ function restrictResize () {
       @update:model-value="applyBackground"
     />
     <v-row id="fontEditor">
+      <div
+        class="colorPicker"
+        :style="{ backgroundColor: appStore.presetEdit.fontColor }"
+      >
+        <v-menu
+          activator="parent"
+          :close-on-content-click="false"
+          close-delay="500"
+          open-on-hover
+        >
+          <v-color-picker
+            v-model="appStore.presetEdit.fontColor"
+            :hide-canvas="false"
+            :hide-sliders="false"
+            mode="rgb"
+            :modes="['rgb']"
+          />
+        </v-menu>
+      </div>
       <p :style="{ 'font-family': appStore.presetEdit.font }">
         Lorem ipsum dolor sit amet
       </p>
@@ -171,6 +190,15 @@ function restrictResize () {
 
 #footer>* {
   margin: 0.2rem;
+}
+
+.colorPicker {
+  margin-right: 0.5em;
+  width: 2em;
+  height: 2em;
+  border-width: 2px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .noSelect {

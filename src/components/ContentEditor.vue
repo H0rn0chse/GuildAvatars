@@ -74,8 +74,9 @@ async function exportImageLocal () {
         id="avatarName"
         ref="avatarName"
         :style="{
-          'font-family': appStore.currentPreset.font,
           'font-size': fontSize,
+          'font-family': appStore.currentPreset.font,
+          'color': appStore.currentPreset.fontColor,
           'width': localText.w + 'px',
           'height': localText.h + 'px',
           'top': localText.y + 'px',
@@ -93,7 +94,10 @@ async function exportImageLocal () {
       <v-btn @click="appStore.editPreset">
         Edit
       </v-btn>
-      <v-btn @click="appStore.deletePreset">
+      <v-btn
+        style="margin-left: 7rem;"
+        @click="appStore.deletePreset"
+      >
         Delete
       </v-btn>
       <v-btn @click="exportImageLocal">
