@@ -40,8 +40,8 @@ function localSave () {
   appStore.presetEdit.textBox.ref.w = target?.parentElement?.clientWidth || 0;
   appStore.presetEdit.textBox.ref.h = target?.parentElement?.clientHeight || 0;
   // save target size
-  appStore.presetEdit.image.w = image.naturalWidth;
-  appStore.presetEdit.image.h = image.naturalHeight;
+  appStore.presetEdit.image.w = image?.naturalWidth || 100;
+  appStore.presetEdit.image.h = image?.naturalHeight || 100;
   appStore.savePreset();
 }
 
