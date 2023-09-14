@@ -43,7 +43,7 @@ export function mouseDown (event) {
   moveAt(target, pos, offset);
   const boundMouseMove = mouseMove.bind(null, target, offset);
   document.addEventListener("mousemove", boundMouseMove);
-  target.addEventListener("mouseup", mouseUp.bind(null, target, boundMouseMove), { once: true });
+  document.addEventListener("mouseup", mouseUp.bind(null, boundMouseMove), { once: true });
 }
 
 function mouseMove (target, offset, event) {
@@ -55,8 +55,7 @@ function mouseMove (target, offset, event) {
   moveAt(target, pos, offset);
 }
 
-function mouseUp (target, mouseMoveHandler) {
+function mouseUp (mouseMoveHandler) {
   dndActive = false;
   document.removeEventListener("mousemove", mouseMoveHandler);
-  target.onmouseup = null;
 }
