@@ -21,7 +21,7 @@ You can find a link to the project [here](https://h0rn0chse.github.io/GuildAvata
 ## Libraries
  * Github Corners [github.com/YuskaWu/github-corner-element](https://github.com/YuskaWu/github-corner-element)
  * Text Fitting [github.com/STRML/textFit](https://github.com/STRML/textFit)
- * Vue [vuejs.org](https://vuejs.org/)
- * Pinia [pinia.vuejs.org](https://pinia.vuejs.org/)
- * Vuetify [next.vuetifyjs.com/en/](https://next.vuetifyjs.com/en/)
- * Vite [vitejs.dev/](https://vitejs.dev/)
+ * UI Framework [vuejs.org](https://vuejs.org/)
+ * State Management [pinia.vuejs.org](https://pinia.vuejs.org/)
+ * Component Library [next.vuetifyjs.com/en/](https://next.vuetifyjs.com/en/)
+ * Packaging [vitejs.dev/](https://vitejs.dev/)
