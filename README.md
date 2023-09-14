@@ -4,14 +4,19 @@ With this project you can apply text to images. Everything is done locally in yo
 
 You can find a link to the project [here](https://h0rn0chse.github.io/GuildAvatars/).
 
- * Maintain avatar presets with image, font and font color.
- * Define a textbox and the text is fitted to its size.
+<p align="center">
+ <img src="./assets/content.png" title="Content Editor" />
+ </p>
+
+ * Add text to the image.
  * Export the composed image.
 
 <p align="center">
- <img src="./assets/content.png" title="Content Editor" />
  <img src="./assets/editor.png" title="Preset Editor" />
 </p>
+
+ * Maintain avatar presets with image, font and font color.
+ * Define a textbox and the text is fitted to its size.
 
 ## Libraries
  * Github Corners [github.com/YuskaWu/github-corner-element](https://github.com/YuskaWu/github-corner-element)
