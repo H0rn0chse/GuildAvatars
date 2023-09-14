@@ -23,5 +23,5 @@ You can find a link to the project [here](https://h0rn0chse.github.io/GuildAvata
  * Text Fitting [github.com/STRML/textFit](https://github.com/STRML/textFit)
  * UI Framework [vuejs.org](https://vuejs.org/)
  * State Management [pinia.vuejs.org](https://pinia.vuejs.org/)
- * Component Library [next.vuetifyjs.com/en/](https://next.vuetifyjs.com/en/)
- * Packaging [vitejs.dev/](https://vitejs.dev/)
+ * Component Library [next.vuetifyjs.com](https://next.vuetifyjs.com/en/)
+ * Packaging [vitejs.dev](https://vitejs.dev/)
