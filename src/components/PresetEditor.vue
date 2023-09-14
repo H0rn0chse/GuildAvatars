@@ -21,6 +21,12 @@ function applyBackground ([firstFile]) {
   }
   const reader = new FileReader();
   reader.onload = (event) => {
+    // Reset text box
+    appStore.presetEdit.textBox.x = 0;
+    appStore.presetEdit.textBox.y = 0;
+    appStore.presetEdit.textBox.w = 100;
+    appStore.presetEdit.textBox.h = 100;
+    // apply image
     appStore.presetEdit.image.src = event.target.result;
   };
   reader.readAsDataURL(firstFile);
