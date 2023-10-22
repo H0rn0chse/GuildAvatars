@@ -270,14 +270,14 @@ function resetBox () {
               label="Natural Width"
               title="Natural Width"
               type="number"
-              readonly
+              disabled
             />
             <v-text-field
               v-model="localData.imageNatural.h"
               label="Natural Height"
               title="Natural Height"
               type="number"
-              readonly
+              disabled
             />
           </v-col>
           <v-col>
