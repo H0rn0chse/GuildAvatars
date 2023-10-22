@@ -1,10 +1,102 @@
 <script setup>
 import { useAppStore } from "@/store/app";
+import { ref, computed, reactive, watch, onMounted } from "vue";
 import { dragstart, mouseDown, isDnDActive, calcBorder } from "@/js/dnd";
-import { ref } from "vue";
+import { translateSize } from "../js/utils.js";
 
 const appStore = useAppStore();
 
+const localData = reactive({
+  textBox: {
+    w: 0,
+    h: 0,
+    x: 0,
+    y: 0,
+  },
+  image: {
+    w: 0,
+    h: 0,
+  },
+  imageNatural: {
+    w: 0,
+    h: 0,
+  },
+});
+
+// Initialize with preset data
+onMounted(() => {
+  const { w, h, x, y } = appStore.presetEdit.textBox;
+  localData.textBox.w = w;
+  localData.textBox.h = h;
+  localData.textBox.x = x;
+  localData.textBox.y = y;
+});
+
+/**
+ * Temporary store for input values
+ * Will be reset on switch back to drag mode
+ */
+const inputValues = new Map();
+const dragEditEnabled = ref(true);
+watch(dragEditEnabled, () => {
+  if (dragEditEnabled.value) {
+    inputValues.clear();
+  }
+});
+function inputGetter (key) {
+  // small to big
+  const naturalBox = translateSize(localData.imageNatural, localData.textBox, localData.image);
+  const naturalValue = naturalBox[key];
+  if (dragEditEnabled.value) {
+    return Math.round(naturalValue);
+  }
+  return inputValues.get(key) || Math.round(naturalValue);
+}
+
+function inputSetter (key, newValue) {
+  inputValues.set(key, newValue);
+  // update big box
+  const newNaturalBox = translateSize(localData.imageNatural, localData.textBox, localData.image);
+  newNaturalBox[key] = parseInt(newValue, 10);
+  // big to small
+  const newBox = translateSize(localData.image, newNaturalBox, localData.imageNatural);
+  localData.textBox[key] = newBox[key];
+}
+
+const inputWidth = computed({
+  get () {
+    return inputGetter("w");
+  },
+  set (newValue) {
+    return inputSetter("w", newValue);
+  }
+});
+const inputHeight = computed({
+  get () {
+    return inputGetter("h");
+  },
+  set (newValue) {
+    return inputSetter("h", newValue);
+  }
+});
+const inputTop = computed({
+  get () {
+    return inputGetter("y");
+  },
+  set (newValue) {
+    return inputSetter("y", newValue);
+  }
+});
+const inputLeft = computed({
+  get () {
+    return inputGetter("x");
+  },
+  set (newValue) {
+    return inputSetter("x", newValue);
+  }
+});
+
+let initialImage = true;
 function applyBackground ([firstFile]) {
   if (!firstFile) {
     return;
@@ -14,18 +106,14 @@ function applyBackground ([firstFile]) {
     ".jpeg",
     ".jpg"
   ];
-  const fileSupported = supportedFileEndings.some((ending) => firstFile.name.endsWith(ending));
+  const fileSupported = supportedFileEndings.some((ending) => firstFile.name.toLowerCase().endsWith(ending));
   if (!fileSupported) {
     alert("wrong filetype");
     return;
   }
   const reader = new FileReader();
   reader.onload = (event) => {
-    // Reset text box
-    appStore.presetEdit.textBox.x = 0;
-    appStore.presetEdit.textBox.y = 0;
-    appStore.presetEdit.textBox.w = 100;
-    appStore.presetEdit.textBox.h = 100;
+    initialImage = false;
     // apply image
     appStore.presetEdit.image.src = event.target.result;
   };
@@ -34,21 +122,53 @@ function applyBackground ([firstFile]) {
 
 const avatarImage = ref(null);
 const textbox = ref(null);
+watch(avatarImage, () => {
+  avatarImage.value.addEventListener("load", () => {
+    trackChanges();
+    if (!initialImage) {
+      resetBox();
+      inputValues.clear();
+    }
+  });
+});
 function localSave () {
-  const image = avatarImage.value;
-  const target = textbox.value;
-  appStore.presetEdit.textBox.x = target?.offsetLeft || 0;
-  appStore.presetEdit.textBox.y = target?.offsetTop || 0;
-  appStore.presetEdit.textBox.w = target?.offsetWidth || 100;
-  appStore.presetEdit.textBox.h = target?.offsetHeight || 100;
+  const { textBox: presetTextBox, image: presetImage } = appStore.presetEdit;
+  const { imageNatural, textBox, image } = getCurrentDimensions();
+
+  presetTextBox.x = textBox.x;
+  presetTextBox.y = textBox.y;
+  presetTextBox.w = textBox.w;
+  presetTextBox.h = textBox.h;
 
   // save current parent size w/o borders as reference
-  appStore.presetEdit.textBox.ref.w = target?.parentElement?.clientWidth || 0;
-  appStore.presetEdit.textBox.ref.h = target?.parentElement?.clientHeight || 0;
+  presetTextBox.ref.w = image.w;
+  presetTextBox.ref.h = image.h;
   // save target size
-  appStore.presetEdit.image.w = image?.naturalWidth || 100;
-  appStore.presetEdit.image.h = image?.naturalHeight || 100;
+  presetImage.w = imageNatural.w;
+  presetImage.h = imageNatural.h;
   appStore.savePreset();
+}
+
+function getCurrentDimensions () {
+  const image = avatarImage.value;
+  const target = textbox.value;
+
+  return {
+    textBox: {
+      w: target?.offsetWidth || 100,
+      h: target?.offsetHeight || 100,
+      x: target?.offsetLeft || 0,
+      y: target?.offsetTop || 0,
+    },
+    image: {
+      w: target?.parentElement?.clientWidth || 0,
+      h: target?.parentElement?.clientHeight || 0,
+    },
+    imageNatural: {
+      w: image?.naturalWidth || 100,
+      h: image?.naturalHeight || 100,
+    },
+  };
 }
 
 function restrictResize () {
@@ -64,43 +184,137 @@ function restrictResize () {
   target.style.height = `${height}px`;
 }
 
+function trackChanges () {
+  if (dragEditEnabled.value) {
+    restrictResize();
+  }
+  const { imageNatural, textBox, image } = getCurrentDimensions();
+  localData.imageNatural = imageNatural;
+  localData.textBox = textBox;
+  localData.image = image;
+}
+
+function mouseDownLocal (event) {
+  if (dragEditEnabled.value) {
+    mouseDown(event);
+  }
+}
+
+function resetBox () {
+  localData.textBox.w = 100;
+  localData.textBox.h = 100;
+  localData.textBox.x = 0;
+  localData.textBox.y = 0;
+}
+
 </script>
 
 <template>
-  <div id="main">
+  <div
+    id="main"
+    :class="dragEditEnabled ? 'manualEditEnabled' : ''"
+  >
     <h2>PresetEditor</h2>
     <v-text-field
       v-model="appStore.presetEdit.name"
       label="Preset Name"
     />
-    <div
-      v-if="appStore.presetEdit.image.src"
-      id="imageEditor"
-      class="noSelect"
-    >
-      <img
-        ref="avatarImage"
-        class="image"
-        :src="appStore.presetEdit.image.src"
-      >
+    <v-row>
       <div
-        id="textBoxResize"
-        ref="textbox"
-        v-mutate.attr="restrictResize"
-        :style="{
-          'width': appStore.presetEdit.textBox.w + 'px',
-          'height': appStore.presetEdit.textBox.h + 'px',
-          'top': appStore.presetEdit.textBox.y + 'px',
-          'left': appStore.presetEdit.textBox.x + 'px',
-        }"
+        v-if="appStore.presetEdit.image.src"
+        id="imageEditor"
+        class="noSelect"
       >
+        <img
+          ref="avatarImage"
+          class="image"
+          :src="appStore.presetEdit.image.src"
+        >
         <div
-          id="textBoxDnD"
-          @dragstart="dragstart"
-          @mousedown="mouseDown"
-        />
+          id="textBoxResize"
+          ref="textbox"
+          v-mutate.attr="trackChanges"
+          :style="{
+            'width': localData.textBox.w + 'px',
+            'height': localData.textBox.h + 'px',
+            'top': localData.textBox.y + 'px',
+            'left': localData.textBox.x + 'px',
+          }"
+        >
+          <div
+            id="textBoxDnD"
+            v-mutate.attr="trackChanges"
+            @dragstart="dragstart"
+            @mousedown="mouseDownLocal"
+          />
+        </div>
       </div>
-    </div>
+      <v-col>
+        <v-row>
+          <v-checkbox
+            v-model="dragEditEnabled"
+            title="Use Drag Edit"
+            label="Use Drag Edit"
+            :style="{flexGrow: 0, marginRight: '2rem' }"
+          />
+          <v-btn
+            text="Reset Text Box"
+            title="Reset Text Box"
+            @click="resetBox"
+          />
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="localData.imageNatural.w"
+              label="Natural Width"
+              title="Natural Width"
+              type="number"
+              readonly
+            />
+            <v-text-field
+              v-model="localData.imageNatural.h"
+              label="Natural Height"
+              title="Natural Height"
+              type="number"
+              readonly
+            />
+          </v-col>
+          <v-col>
+            <v-text-field
+              v-model="inputWidth"
+              label="Box Width"
+              title="Box Width"
+              type="number"
+              :readonly="dragEditEnabled"
+            />
+            <v-text-field
+              v-model="inputHeight"
+              label="Box Height"
+              title="Box Height"
+              type="number"
+              :readonly="dragEditEnabled"
+            />
+          </v-col>
+          <v-col>
+            <v-text-field
+              v-model="inputTop"
+              label="Offset Top"
+              title="Offset Top"
+              type="number"
+              :readonly="dragEditEnabled"
+            />
+            <v-text-field
+              v-model="inputLeft"
+              label="Offset Left"
+              title="Offset Left"
+              type="number"
+              :readonly="dragEditEnabled"
+            />
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
     <v-file-input
       class="imageSelector"
       label="Image"
@@ -156,6 +370,7 @@ function restrictResize () {
   border: solid #2b2b2b 2px;
   border-radius: 5px;
   width: min-content;
+  height: min-content;
   overflow: hidden;
 }
 
@@ -168,8 +383,11 @@ function restrictResize () {
   position: absolute;
   background-color: rgb(240, 128, 128, 0.5);
   overflow: auto;
-  resize: both;
   border-radius: 3px;
+}
+
+.manualEditEnabled #textBoxResize {
+  resize: both;
 }
 
 #textBoxDnD {
