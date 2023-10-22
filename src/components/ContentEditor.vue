@@ -1,7 +1,7 @@
 <script setup>
 import { useAppStore } from "@/store/app";
 import { fitText, exportImage, translateSize } from "@/js/utils";
-import { nextTick, watch, reactive, computed, ref } from "vue";
+import { watch, reactive, computed, ref } from "vue";
 
 const appStore = useAppStore();
 
@@ -11,10 +11,12 @@ const localImage = reactive({
 });
 
 const avatarImage = ref(null);
-watch([avatarImage, appStore.currentPreset], async () => {
-  await nextTick();
-  localImage.width = avatarImage.value?.offsetWidth || 0;
-  localImage.height = avatarImage.value?.offsetHeight || 0;
+
+watch(avatarImage, () => {
+  avatarImage.value.addEventListener("load", () => {
+    localImage.width = avatarImage.value?.offsetWidth || 0;
+    localImage.height = avatarImage.value?.offsetHeight || 0;
+  });
 });
 
 const fontSize = ref(0);
