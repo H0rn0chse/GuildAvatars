@@ -1,5 +1,5 @@
 // Utilities
-import { getPersonalizationValue, setPersonalizationValue } from "@/js/personalization";
+import { getPersonalizationValue, getValue, setPersonalizationValue, setValue } from "@/js/personalization";
 import { clone } from "@/js/utils";
 import { defineStore } from "pinia";
 import { v4 as uuidV4 } from "uuid";
@@ -42,7 +42,10 @@ export const useAppStore = defineStore("app", {
     presets: [],
     selectedPresetId: null,
     presetEdit: null,
-    contentEdit: emptyContent
+    contentEdit: emptyContent,
+    presetEditor: {
+      dragEditEnabled: getValue("dragEditEnabled") ?? true,
+    }
   }),
   getters: {
     currentPreset (state) {
@@ -91,6 +94,10 @@ export const useAppStore = defineStore("app", {
     },
     _persistPresets () {
       setPersonalizationValue("presets", clone(this.presets));
+    },
+    setDragEditEnabled (newValue) {
+      this.presetEditor.dragEditEnabled = !!newValue;
+      setValue("dragEditEnabled", !!newValue);
     }
   }
 });

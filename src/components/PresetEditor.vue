@@ -6,6 +6,15 @@ import { translateSize } from "../js/utils.js";
 
 const appStore = useAppStore();
 
+const dragEditEnabledLocal = computed({
+  get () {
+    return appStore.presetEditor.dragEditEnabled;
+  },
+  set (newValue) {
+    appStore.setDragEditEnabled(!!newValue);
+  }
+});
+
 const localData = reactive({
   textBox: {
     w: 0,
@@ -37,9 +46,8 @@ onMounted(() => {
  * Will be reset on switch back to drag mode
  */
 const inputValues = new Map();
-const dragEditEnabled = ref(true);
-watch(dragEditEnabled, () => {
-  if (dragEditEnabled.value) {
+watch(dragEditEnabledLocal, () => {
+  if (dragEditEnabledLocal.value) {
     inputValues.clear();
   }
 });
@@ -47,7 +55,7 @@ function inputGetter (key) {
   // small to big
   const naturalBox = translateSize(localData.imageNatural, localData.textBox, localData.image);
   const naturalValue = naturalBox[key];
-  if (dragEditEnabled.value) {
+  if (dragEditEnabledLocal.value) {
     return Math.round(naturalValue);
   }
   return inputValues.get(key) || Math.round(naturalValue);
@@ -185,7 +193,7 @@ function restrictResize () {
 }
 
 function trackChanges () {
-  if (dragEditEnabled.value) {
+  if (dragEditEnabledLocal.value) {
     restrictResize();
   }
   const { imageNatural, textBox, image } = getCurrentDimensions();
@@ -195,7 +203,7 @@ function trackChanges () {
 }
 
 function mouseDownLocal (event) {
-  if (dragEditEnabled.value) {
+  if (dragEditEnabledLocal.value) {
     mouseDown(event);
   }
 }
@@ -212,7 +220,7 @@ function resetBox () {
 <template>
   <div
     id="main"
-    :class="dragEditEnabled ? 'manualEditEnabled' : ''"
+    :class="dragEditEnabledLocal ? 'manualEditEnabled' : ''"
   >
     <h2>PresetEditor</h2>
     <v-text-field
@@ -252,7 +260,7 @@ function resetBox () {
       <v-col>
         <v-row>
           <v-checkbox
-            v-model="dragEditEnabled"
+            v-model="dragEditEnabledLocal"
             title="Use Drag Edit"
             label="Use Drag Edit"
             :style="{flexGrow: 0, marginRight: '2rem' }"
@@ -286,14 +294,14 @@ function resetBox () {
               label="Box Width"
               title="Box Width"
               type="number"
-              :readonly="dragEditEnabled"
+              :readonly="dragEditEnabledLocal"
             />
             <v-text-field
               v-model="inputHeight"
               label="Box Height"
               title="Box Height"
               type="number"
-              :readonly="dragEditEnabled"
+              :readonly="dragEditEnabledLocal"
             />
           </v-col>
           <v-col>
@@ -302,14 +310,14 @@ function resetBox () {
               label="Offset Top"
               title="Offset Top"
               type="number"
-              :readonly="dragEditEnabled"
+              :readonly="dragEditEnabledLocal"
             />
             <v-text-field
               v-model="inputLeft"
               label="Offset Left"
               title="Offset Left"
               type="number"
-              :readonly="dragEditEnabled"
+              :readonly="dragEditEnabledLocal"
             />
           </v-col>
         </v-row>

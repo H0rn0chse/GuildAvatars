@@ -1,3 +1,4 @@
+const localStorageKey = "guild-avatars-personalization";
 const databaseName = "guild-avatars-personalization";
 const objectKey = "0";
 const storeName = "Store";
@@ -58,4 +59,35 @@ function getDB () {
       reject();
     };
   });
+}
+
+function getLocalStorageBlob () {
+  let data;
+  try {
+    const string = localStorage.getItem(localStorageKey);
+    if (string) {
+      data = JSON.parse(string);
+    } else {
+      data = {};
+    }
+  } catch (err) {
+    data = {};
+  }
+  return data;
+}
+
+export function getValue (key) {
+  const data = getLocalStorageBlob();
+  return data[key];
+}
+
+export function setValue (key, value) {
+  const currentData = getLocalStorageBlob();
+  currentData[key] = value;
+  try {
+    const string = JSON.stringify(currentData);
+    localStorage.setItem(localStorageKey, string);
+  } catch (err) {
+    console.error(err);
+  }
 }
